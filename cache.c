@@ -1,7 +1,5 @@
 /*
- * EECS 370, University of Michigan
  * Project 4: LC-2K Cache Simulator
- * Instructions are found in the project spec.
  */
 
 #include <stdio.h>
@@ -54,16 +52,10 @@ void printAction(int, int, enum actionType);
 void printCache();
 
 // Own Variables and functions
-// int num_mainMemWordsAccessed = 0;
 int num_hits = 0;
 int num_misses = 0;
 int num_writebacks = 0;
 int num_dirtyLeft = 0;
-
-// int totNumWords = 0;
-// int blockOffset = 0;
-// int setIndex = 0;
-// int tagSize = 0;
 
 void setCache();
 
@@ -72,9 +64,6 @@ int getSet(unsigned int addr);
 int getBlock(unsigned int addr);
 
 int getAddr(int tag, int set, int block);
-
-// int checkInvalid(int set, int block);
-// int checkFull(int set);
 
 // 1) WRITE POLICY: write-back, allocate-on-write
 // 2) ASSOCIATIVITY: varies according to the blocksPerSet parameter. Associativity ranges from 1 (direct-mapped) to the number 
@@ -101,8 +90,6 @@ void cache_init(int blockSize, int numSets, int blocksPerSet){
     cache.blockOffset = log2(blockSize);
     cache.setIndex = log2(numSets);
     cache.tagSize = 32 - cache.setIndex - cache.blockOffset;
-    // printf("b_s: %d, n_s: %d\n", blockSize, numSets);
-    // printf("tag: %d, set: %d, block: %d\n", cache.tagSize, cache.setIndex, cache.blockOffset);
     setCache();
 
     printf("Simulating a cache with %d total lines; each line has %d words\n", numSets*blocksPerSet, blockSize);
@@ -123,16 +110,12 @@ void cache_init(int blockSize, int numSets, int blocksPerSet){
  */
 int cache_access(int addr, int write_flag, int write_data) {
 
-    // printf("beginning\n");
-
     // Get tag, block, and set
     int addrU = (unsigned int)(addr);
 
     int tag = getTag(addrU);
     int block = getBlock(addrU); 
     int set = getSet(addrU);
-
-    // printf("addr: %d, tag: %d, set: %d, block: %d\n", addrU, tag, set, block);
 
     // Check for any invlid in set
     int invalid = -1;
@@ -150,7 +133,6 @@ int cache_access(int addr, int write_flag, int write_data) {
         if (cache.blocks[set].tag[i] == tag) {
             tagFound = i;
             invalid = -1;
-            // printf("here?\n");
             break;
         }
     }
@@ -198,8 +180,6 @@ int cache_access(int addr, int write_flag, int write_data) {
             printAction(addr, 1, cacheToProcessor);
         }
 
-        // printCache();
-
         return cache.blocks[set].data[block+invalid];
 
     } else { // if valid
@@ -246,7 +226,6 @@ int cache_access(int addr, int write_flag, int write_data) {
                 ++num_writebacks;
 
             } else {
-                // printf("addr: %d, tag: %d, set: %d\n", getAddr(cache.blocks[set].tag[maxInd], set, block), cache.blocks[set].tag[maxInd], set);
                 printAction(getAddr(cache.blocks[set].tag[maxInd], set, 0), cache.blockSize, cacheToNowhere);
             }
 
@@ -276,13 +255,10 @@ int cache_access(int addr, int write_flag, int write_data) {
             ++num_misses;
             printAction(addrTemp, cache.blockSize, memoryToCache);
             if (write_flag == 1) {
-                // printf("what the heck\n");
                 printAction(addr, 1, processorToCache);
             } else {
                 printAction(addr, 1, cacheToProcessor);
             }
-
-            // printCache();
 
             return cache.blocks[set].data[block+maxInd];
 
@@ -312,11 +288,8 @@ int cache_access(int addr, int write_flag, int write_data) {
             if (write_flag == 1) {
                 printAction(addr, 1, processorToCache);
             } else {
-                // printf("addr: %d\n", addr);
                 printAction(addr, 1, cacheToProcessor);
             }
-
-            // printCache();
 
             return cache.blocks[set].data[block+tagFound];
 
@@ -436,35 +409,9 @@ int getBlock(unsigned int addr) {
 }
 
 int getAddr(int tag, int set, int block) {
-    // printf("getAddr - tag: %d, set: %d, block: %d\n", tag, set , block);
     int temp = 0;
     temp += (tag << (cache.setIndex + cache.blockOffset));
-    // printf("temp: %d\n", temp);
     temp += (set << (cache.blockOffset));
-    // printf("temp: %d\n", temp);
     temp += block;
-    // printf("temp: %d\n", temp);
     return temp;
 } 
-
-// int checkInvalid(int set, int block) {
-//     int i;
-//     for (i = 0; i < (cache.blockSize * cache.blocksPerSet); i += cache.blockSize) {
-//         if (cache.blocks[set].valid[i] == 0) {
-//             block = i;
-//             cache.blocks[i].valid[i] = 1;
-//             return 1;
-//         }
-//     }
-//     return 0;
-// }
-
-// int checkFull(int set) {
-//     int i;
-//     for (i = 0; i < (cache.blockSize * cache.blocksPerSet); i += cache.blockSize) {
-//         if (cache.blocks[set].valid[i] != 0) {
-//             // right back current stuff to memory
-//             // put new stuff in
-//         }
-//     }
-// }

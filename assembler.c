@@ -1,5 +1,4 @@
-/**
- * Project 1 
+/*
  * Assembler code fragment for LC-2K 
  */
 
@@ -15,9 +14,6 @@
 // Given function prototypes
 int readAndParse(FILE *, char *, char *, char *, char *, char *);
 int isNumber(char *);
-
-// Own function prototypes
-
 
 // Main
 int
@@ -330,27 +326,6 @@ main(int argc, char *argv[])
         fprintf(outFilePtr, "%d\n", text);
     }
 
-
-
-    // Example code?
-    // /* here is an example for how to use readAndParse to read a line from
-    //     inFilePtr */
-    // if (! readAndParse(inFilePtr, label, opcode, arg0, arg1, arg2) ) {
-    //     /* reached end of file */
-    // } 
-
-    // /* this is how to rewind the file ptr so that you start reading from the
-    //     beginning of the file */
-    // rewind(inFilePtr);
-
-    // /* after doing a readAndParse, you may want to do the following to test the
-    //     opcode */
-    // if (!strcmp(opcode, "add")) {
-    //     /* do whatever you need to do for opcode "add" */
-    // }
-
-
-
     // Close all open files
     fclose(inFilePtr);
     fclose(outFilePtr);
@@ -416,7 +391,4 @@ isNumber(char *string)
     int i;
     return( (sscanf(string, "%d", &i)) == 1);
 }
-
-
-// Own function implementations
 

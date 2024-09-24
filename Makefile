@@ -1,5 +1,4 @@
 # Makefile
-# Build rules for EECS 370 P4
 
 # BE SURE to copy your assembler.c to the same directory as your simulator.c!
 

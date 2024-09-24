@@ -1,6 +1,5 @@
 /*
- * Project 1
- * EECS 370 LC-2K Instruction-level simulator
+ * LC-2K Instruction-level simulator
  *
  * Make sure *not* to modify printState or any of the associated functions
  */
@@ -84,7 +83,6 @@ int main(int argc, char *argv[])
             printf("error in reading address %d\n", state.numMemory);
             exit(1);
         }
-        // printf("memory[%d]=%d\n", state.numMemory, state.mem[state.numMemory]);
     }
 
     //Your code starts here
@@ -105,12 +103,7 @@ int main(int argc, char *argv[])
     // Read opcodes and do operations
     while ((state.mem[state.pc] >> 22) != 6) { // while not "halt"
 
-        // Print state before operation
-        // printState(&state);
-
         // Initialize state variable
-        // int st = state.mem[state.pc]; 
-        // printf("bruh?\n");
         int st = cache_access(state.pc, 0, 0);
 
         if ((st >> 22) == 0) { // add
@@ -147,8 +140,6 @@ int main(int argc, char *argv[])
             int offset16 = getOffset(st);
 
             // Do load operation
-            // state.reg[regB] = state.mem[state.reg[regA] + offset16]; 
-            // printf("loc lw: %d\n", state.reg[regA] + offset16);
             state.reg[regB] = cache_access(state.reg[regA] + offset16, 0, 0);
 
             // Increment program counter
@@ -163,8 +154,6 @@ int main(int argc, char *argv[])
 
             // Do store operation
             int loc = state.reg[regA] + offset16;
-            // state.mem[loc] = state.reg[regB];
-            // printf("loc sw: %d\n", loc);
             cache_access(loc, 1, state.reg[regB]);
 
             // Increment program counter
@@ -212,9 +201,6 @@ int main(int argc, char *argv[])
 
     // Halt goes in cache too (for some reason)
     cache_access(state.pc, 0, 0);
-
-    // Print state after operation completes
-    // printState(&state);
 
     // Halt attributes to program counter and counter
     ++state.pc;
